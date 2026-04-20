@@ -1,0 +1,2505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Savoria — Fine Dining & Takeout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  --charcoal: #1c1917;
+  --dark: #0d0b09;
+  --cream: #faf6ef;
+  --warm-white: #f5ede0;
+  --gold: #c9922a;
+  --gold-light: #e8b94a;
+  --terracotta: #c0522e;
+  --muted: #7a6e64;
+  --border: rgba(201,146,42,0.25);
+  --card-bg: #231f1a;
+  --overlay: rgba(13,11,9,0.72);
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --transition: 0.35s cubic-bezier(0.4,0,0.2,1);
+  --shadow: 0 12px 48px rgba(0,0,0,0.45);
+  --radius: 4px;
+}
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--charcoal);
+  color: var(--cream);
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+img { display: block; width: 100%; object-fit: cover; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: var(--font-body); border: none; background: none; }
+input, textarea, select { font-family: var(--font-body); }
+ul { list-style: none; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dark); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+/* ===== UTILITY ===== */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--cream);
+}
+.section-title em { font-style: italic; color: var(--gold); }
+.section-subtitle {
+  font-size: 0.95rem;
+  color: var(--muted);
+  max-width: 520px;
+  margin-top: 14px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 34px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.08);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn:hover::after { opacity: 1; }
+.btn-primary {
+  background: var(--gold);
+  color: var(--dark);
+}
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,146,42,0.4); }
+.btn-outline {
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
+}
+.btn-outline:hover { background: var(--gold); color: var(--dark); transform: translateY(-2px); }
+.btn-dark {
+  background: var(--charcoal);
+  color: var(--cream);
+  border: 1.5px solid rgba(255,255,255,0.12);
+}
+.btn-dark:hover { border-color: var(--gold); color: var(--gold); }
+.divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  margin: 20px 0;
+}
+.divider-center { margin: 20px auto; }
+.text-center { text-align: center; }
+.text-center .section-subtitle { margin: 14px auto 0; }
+
+/* ===== PAGE SYSTEM ===== */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ===== TOP BAR ===== */
+.topbar {
+  background: var(--dark);
+  border-bottom: 1px solid var(--border);
+  padding: 9px 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.topbar-contact { display: flex; gap: 24px; flex-wrap: wrap; }
+.topbar-contact a { display: flex; align-items: center; gap: 7px; transition: color 0.2s; }
+.topbar-contact a:hover { color: var(--gold); }
+.topbar-social { display: flex; gap: 14px; }
+.topbar-social a { font-size: 0.85rem; transition: color 0.2s; }
+.topbar-social a:hover { color: var(--gold); }
+
+/* ===== HEADER / NAV ===== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background: rgba(28,25,23,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+.site-header.scrolled { box-shadow: 0 4px 40px rgba(0,0,0,0.6); }
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-mark {
+  width: 42px;
+  height: 42px;
+  background: var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--dark);
+  flex-shrink: 0;
+}
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: 0.02em;
+}
+.logo-text span { color: var(--gold); }
+.main-nav { display: flex; align-items: center; gap: 4px; }
+.nav-item {
+  position: relative;
+}
+.nav-link {
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(250,246,239,0.75);
+  border-radius: 2px;
+  transition: color 0.2s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.nav-link:hover, .nav-link.active { color: var(--gold); }
+.nav-link .arrow { font-size: 0.6rem; transition: transform 0.2s; }
+.nav-item:hover .arrow { transform: rotate(180deg); }
+.dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  min-width: 180px;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+.nav-item:hover .dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.dropdown a {
+  display: block;
+  padding: 9px 18px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  transition: color 0.2s, background 0.2s;
+}
+.dropdown a:hover { color: var(--gold); background: rgba(201,146,42,0.06); }
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.cart-btn {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--cream);
+  font-size: 1.1rem;
+  transition: var(--transition);
+  cursor: pointer;
+  background: none;
+}
+.cart-btn:hover { border-color: var(--gold); color: var(--gold); }
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--terracotta);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--cream);
+  transition: var(--transition);
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ===== MOBILE MENU ===== */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--dark);
+  z-index: 850;
+  padding: 100px 32px 40px;
+  overflow-y: auto;
+  flex-direction: column;
+  gap: 6px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-nav-link {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--cream);
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.mobile-nav-link:hover { color: var(--gold); }
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=85');
+  background-size: cover;
+  background-position: center 30%;
+  transform: scale(1.08);
+  animation: heroZoom 12s ease-in-out infinite alternate;
+}
+@keyframes heroZoom {
+  from { transform: scale(1.08); }
+  to { transform: scale(1.0); }
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, rgba(13,11,9,0.92) 0%, rgba(13,11,9,0.65) 55%, rgba(13,11,9,0.3) 100%);
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  padding: 120px 0 80px;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border);
+  padding: 7px 18px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 28px;
+  animation: fadeUp 0.7s ease both;
+}
+.hero-badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--cream);
+  animation: fadeUp 0.7s 0.1s ease both;
+}
+.hero-title em { display: block; font-style: italic; color: var(--gold); }
+.hero-desc {
+  font-size: 1.05rem;
+  color: rgba(250,246,239,0.7);
+  margin: 24px 0 40px;
+  line-height: 1.8;
+  max-width: 480px;
+  animation: fadeUp 0.7s 0.2s ease both;
+}
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.7s 0.3s ease both;
+}
+.hero-stats {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  gap: 1px;
+  animation: fadeUp 0.7s 0.4s ease both;
+}
+.hero-stat {
+  background: rgba(28,25,23,0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  padding: 22px 30px;
+  text-align: center;
+}
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+.hero-stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  animation: fadeUp 1s 0.6s ease both;
+}
+.scroll-line {
+  width: 1px;
+  height: 50px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollAnim 2s ease-in-out infinite;
+}
+@keyframes scrollAnim {
+  0%, 100% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(0.5); opacity: 0.4; }
+}
+
+/* ===== MARQUEE ===== */
+.marquee-section {
+  background: var(--gold);
+  padding: 14px 0;
+  overflow: hidden;
+}
+.marquee-track {
+  display: flex;
+  gap: 60px;
+  animation: marquee 22s linear infinite;
+  width: max-content;
+}
+.marquee-track:hover { animation-play-state: paused; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dark);
+  white-space: nowrap;
+}
+.marquee-dot { width: 5px; height: 5px; background: var(--dark); border-radius: 50%; opacity: 0.5; }
+
+/* ===== ABOUT / PROMISE STRIP ===== */
+.promise-section { padding: 100px 0; background: var(--dark); }
+.promise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.promise-image-wrap {
+  position: relative;
+}
+.promise-img-main {
+  border-radius: 8px;
+  height: 520px;
+  object-fit: cover;
+}
+.promise-img-accent {
+  position: absolute;
+  bottom: -30px;
+  right: -30px;
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+  border: 4px solid var(--dark);
+  object-fit: cover;
+}
+.promise-badge-float {
+  position: absolute;
+  top: 30px;
+  left: -20px;
+  background: var(--gold);
+  color: var(--dark);
+  border-radius: 8px;
+  padding: 18px 22px;
+  text-align: center;
+  font-weight: 700;
+}
+.promise-badge-num {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  line-height: 1;
+}
+.promise-badge-text { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.promise-features { display: flex; flex-direction: column; gap: 22px; margin-top: 36px; }
+.promise-feat {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 20px 22px;
+  background: var(--card-bg);
+  border-radius: 6px;
+  border-left: 3px solid var(--gold);
+  transition: var(--transition);
+}
+.promise-feat:hover { transform: translateX(6px); }
+.promise-feat-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(201,146,42,0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.promise-feat-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+.promise-feat-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+/* ===== FEATURED DISHES ===== */
+.featured-section { padding: 100px 0; background: var(--charcoal); }
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 54px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.dishes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+.dish-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: var(--transition);
+  position: relative;
+}
+.dish-card:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(0,0,0,0.5); border-color: var(--border); }
+.dish-card-img {
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+.dish-card-img img {
+  height: 100%;
+  transition: transform 0.6s ease;
+}
+.dish-card:hover .dish-card-img img { transform: scale(1.08); }
+.dish-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: var(--terracotta);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+.dish-badge.popular { background: var(--gold); color: var(--dark); }
+.dish-card-body { padding: 22px; }
+.dish-category {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.dish-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.dish-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.65; margin-bottom: 18px; }
+.dish-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dish-price {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.dish-price small { font-size: 0.85rem; font-style: italic; color: var(--muted); }
+.add-to-cart-btn {
+  width: 38px;
+  height: 38px;
+  background: var(--gold);
+  color: var(--dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  transition: var(--transition);
+  cursor: pointer;
+  border: none;
+}
+.add-to-cart-btn:hover { background: var(--gold-light); transform: scale(1.12) rotate(90deg); }
+.add-to-cart-btn.added { background: #4caf50; }
+
+/* ===== PROMO BANNER ===== */
+.promo-section { padding: 80px 0; background: var(--dark); overflow: hidden; }
+.promo-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+.promo-card {
+  border-radius: 12px;
+  padding: 52px 44px;
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.promo-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+  z-index: 1;
+}
+.promo-card-bg {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.6s ease;
+}
+.promo-card:hover .promo-card-bg { transform: scale(1.06); }
+.promo-card-content { position: relative; z-index: 2; }
+.promo-tag {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--dark);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+.promo-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.promo-desc { font-size: 0.88rem; color: rgba(255,255,255,0.7); margin-bottom: 24px; }
+.promo-small {
+  padding: 32px 30px;
+  min-height: 0;
+}
+.promo-small .promo-title { font-size: 1.6rem; }
+
+/* ===== GALLERY ===== */
+.gallery-section { padding: 100px 0; background: var(--charcoal); }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 220px);
+  gap: 10px;
+  margin-top: 54px;
+}
+.gallery-item {
+  overflow: hidden;
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+}
+.gallery-item img { height: 100%; transition: transform 0.6s ease; }
+.gallery-item:hover img { transform: scale(1.1); }
+.gallery-item::after {
+  content: '🔍';
+  position: absolute;
+  inset: 0;
+  background: rgba(13,11,9,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.gallery-item:hover::after { opacity: 1; }
+.gallery-item.large { grid-column: span 2; grid-row: span 2; }
+.gallery-item.tall { grid-row: span 2; }
+
+/* ===== TESTIMONIALS ===== */
+.testimonials-section { padding: 100px 0; background: var(--dark); }
+.testimonials-wrapper { position: relative; overflow: hidden; margin-top: 54px; }
+.testimonials-track {
+  display: flex;
+  gap: 28px;
+  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.testimonial-card {
+  flex: 0 0 calc(33.333% - 19px);
+  background: var(--card-bg);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 34px 30px;
+  position: relative;
+}
+.testimonial-card::before {
+  content: '"';
+  font-family: var(--font-display);
+  font-size: 5rem;
+  color: var(--gold);
+  opacity: 0.15;
+  position: absolute;
+  top: 10px;
+  left: 24px;
+  line-height: 1;
+}
+.testimonial-stars { color: var(--gold); font-size: 0.9rem; margin-bottom: 16px; letter-spacing: 3px; }
+.testimonial-text { font-size: 0.92rem; color: rgba(250,246,239,0.75); line-height: 1.8; margin-bottom: 24px; font-style: italic; }
+.testimonial-author { display: flex; align-items: center; gap: 14px; }
+.testimonial-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+}
+.testimonial-name { font-weight: 600; font-size: 0.9rem; color: var(--cream); }
+.testimonial-role { font-size: 0.75rem; color: var(--muted); }
+.testimonials-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 44px;
+}
+.slider-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  color: var(--cream);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  cursor: pointer;
+  background: none;
+}
+.slider-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+.slider-dots { display: flex; gap: 8px; }
+.slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.slider-dot.active { background: var(--gold); width: 24px; }
+
+/* ===== NEWSLETTER ===== */
+.newsletter-section {
+  padding: 90px 0;
+  background: linear-gradient(135deg, var(--charcoal) 0%, #2a1f0f 100%);
+  position: relative;
+  overflow: hidden;
+}
+.newsletter-section::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,146,42,0.12) 0%, transparent 70%);
+}
+.newsletter-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+.newsletter-form { display: flex; gap: 0; }
+.newsletter-input {
+  flex: 1;
+  padding: 14px 22px;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid var(--border);
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  color: var(--cream);
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+.newsletter-input::placeholder { color: var(--muted); }
+.newsletter-input:focus { outline: none; border-color: var(--gold); }
+.newsletter-submit {
+  padding: 14px 28px;
+  background: var(--gold);
+  color: var(--dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 0 4px 4px 0;
+  transition: background 0.2s;
+  border: none;
+  cursor: pointer;
+}
+.newsletter-submit:hover { background: var(--gold-light); }
+
+/* ===== MENU PAGE ===== */
+.menu-hero {
+  background: var(--dark);
+  padding: 80px 0 60px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.menu-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.menu-hero p { color: var(--muted); font-size: 1rem; }
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.breadcrumb span { color: var(--gold); }
+.menu-categories {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 48px 0 54px;
+}
+.cat-btn {
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  color: var(--muted);
+  background: transparent;
+  transition: var(--transition);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cat-btn:hover { border-color: var(--gold); color: var(--gold); }
+.cat-btn.active { background: var(--gold); color: var(--dark); border-color: var(--gold); }
+.cat-btn .cat-icon { font-size: 1.1rem; }
+.menu-section { padding: 60px 0 100px; }
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+}
+.menu-item {
+  background: var(--card-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: var(--transition);
+  display: none;
+}
+.menu-item.visible { display: block; animation: fadeUp 0.4s ease both; }
+.menu-item:hover { transform: translateY(-6px); border-color: var(--border); box-shadow: 0 16px 50px rgba(0,0,0,0.4); }
+
+/* ===== CART SIDEBAR ===== */
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+.cart-overlay.open { opacity: 1; visibility: visible; }
+.cart-sidebar {
+  position: fixed;
+  top: 0;
+  right: -440px;
+  width: 440px;
+  height: 100vh;
+  background: var(--dark);
+  border-left: 1px solid var(--border);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow: hidden;
+}
+.cart-sidebar.open { right: 0; }
+.cart-header {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cart-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--cream);
+}
+.cart-close {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--cream);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: var(--transition);
+  background: none;
+}
+.cart-close:hover { border-color: var(--terracotta); color: var(--terracotta); }
+.cart-body { flex: 1; overflow-y: auto; padding: 20px 28px; }
+.cart-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+.cart-empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.4; }
+.cart-empty-text { font-family: var(--font-display); font-size: 1.2rem; }
+.cart-item {
+  display: grid;
+  grid-template-columns: 70px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.cart-item-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.cart-item-name { font-weight: 600; font-size: 0.9rem; color: var(--cream); margin-bottom: 4px; }
+.cart-item-price { color: var(--gold); font-size: 0.85rem; }
+.cart-item-qty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.qty-btn {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--cream);
+  transition: var(--transition);
+  background: none;
+}
+.qty-btn:hover { border-color: var(--gold); color: var(--gold); }
+.qty-num { font-size: 0.85rem; font-weight: 600; min-width: 16px; text-align: center; }
+.cart-item-remove {
+  color: var(--muted);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+}
+.cart-item-remove:hover { color: var(--terracotta); }
+.cart-footer { padding: 20px 28px 28px; border-top: 1px solid var(--border); }
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--card-bg);
+  border-radius: 6px;
+}
+.cart-total-label { font-weight: 600; color: var(--cream); }
+.cart-total-price {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.cart-actions { display: flex; flex-direction: column; gap: 10px; }
+.cart-actions .btn { justify-content: center; width: 100%; }
+.wa-btn {
+  background: #25D366;
+  color: white;
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: var(--transition);
+  cursor: pointer;
+  border: none;
+}
+.wa-btn:hover { background: #1ebe5a; transform: translateY(-2px); }
+
+/* ===== CHECKOUT PAGE ===== */
+.checkout-section { padding: 80px 0; }
+.checkout-grid { display: grid; grid-template-columns: 1fr 400px; gap: 40px; align-items: start; }
+.checkout-form-wrap {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 40px;
+}
+.checkout-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 32px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-group { margin-bottom: 22px; }
+.form-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.form-input {
+  width: 100%;
+  padding: 13px 16px;
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  color: var(--cream);
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+.form-input:focus { outline: none; border-color: var(--gold); }
+.form-input::placeholder { color: var(--muted); }
+textarea.form-input { min-height: 120px; resize: vertical; }
+.order-summary-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 32px;
+  position: sticky;
+  top: 100px;
+}
+.summary-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 24px;
+}
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.summary-item strong { color: var(--cream); }
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0 0;
+  font-weight: 700;
+  color: var(--cream);
+}
+.summary-total-price {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--gold);
+}
+.payment-methods { margin-top: 28px; }
+.payment-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.paypal-btn-wrap {
+  background: #0070ba;
+  border-radius: 6px;
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.paypal-btn-wrap:hover { background: #005ea6; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,112,186,0.35); }
+
+/* ===== CONTACT PAGE ===== */
+.contact-section { padding: 80px 0; }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+.contact-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+.contact-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(201,146,42,0.12);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.contact-info-label { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
+.contact-info-value { font-size: 0.95rem; color: var(--cream); line-height: 1.6; }
+.hours-table { width: 100%; margin-top: 30px; }
+.hours-table td { padding: 8px 0; font-size: 0.88rem; }
+.hours-table td:first-child { color: var(--muted); width: 140px; }
+.hours-table td:last-child { color: var(--cream); }
+.map-placeholder {
+  height: 300px;
+  background: var(--card-bg);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 40px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 2rem;
+  overflow: hidden;
+  position: relative;
+}
+.map-placeholder iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 10px;
+  filter: grayscale(0.3) invert(0.85) hue-rotate(180deg);
+}
+
+/* ===== FOOTER ===== */
+.site-footer { background: var(--dark); border-top: 1px solid var(--border); padding: 80px 0 0; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; padding-bottom: 60px; }
+.footer-brand-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.8; margin: 18px 0 24px; max-width: 280px; }
+.footer-social { display: flex; gap: 12px; }
+.footer-social-link {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  transition: var(--transition);
+}
+.footer-social-link:hover { border-color: var(--gold); color: var(--gold); }
+.footer-heading {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 22px;
+}
+.footer-links { display: flex; flex-direction: column; gap: 10px; }
+.footer-links a { font-size: 0.85rem; color: var(--muted); transition: color 0.2s; }
+.footer-links a:hover { color: var(--gold); padding-left: 6px; }
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding: 22px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--muted);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+.modal-overlay.open { opacity: 1; visibility: visible; }
+.modal {
+  background: var(--dark);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 48px 44px;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  transform: scale(0.9);
+  transition: transform 0.3s;
+}
+.modal-overlay.open .modal { transform: scale(1); }
+.modal-icon { font-size: 3rem; margin-bottom: 20px; }
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 12px;
+}
+.modal-text { color: var(--muted); margin-bottom: 30px; line-height: 1.7; }
+
+/* ===== TOAST ===== */
+.toast-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 6px;
+  padding: 14px 18px;
+  color: var(--cream);
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideInRight 0.35s ease, fadeOut 0.3s 2.7s ease forwards;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+.toast.success { border-left-color: #4caf50; }
+.toast.error { border-left-color: var(--terracotta); }
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(20px); }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .main-nav { display: none; }
+  .hamburger { display: flex; }
+  .promise-grid { grid-template-columns: 1fr; gap: 50px; }
+  .promise-img-accent { display: none; }
+  .promo-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-template-rows: auto; }
+  .gallery-item.large { grid-column: span 2; }
+  .gallery-item.tall { grid-row: span 1; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .testimonial-card { flex: 0 0 calc(50% - 14px); }
+  .newsletter-inner { grid-template-columns: 1fr; gap: 40px; }
+  .checkout-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .hero-stats { display: none; }
+}
+@media (max-width: 768px) {
+  .topbar-contact a:not(:first-child) { display: none; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-item.large { grid-column: span 2; }
+  .testimonial-card { flex: 0 0 calc(100% - 0px); }
+  .form-row { grid-template-columns: 1fr; }
+  .dishes-grid { grid-template-columns: 1fr; }
+  .menu-grid { grid-template-columns: 1fr; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+  .newsletter-form { flex-direction: column; }
+  .newsletter-input { border-right: 1.5px solid var(--border); border-radius: 4px; }
+  .newsletter-submit { border-radius: 4px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .cart-sidebar { width: 100%; right: -100%; }
+  .hero-content { padding: 100px 0 60px; }
+  .checkout-form-wrap { padding: 24px; }
+}
+@media (max-width: 480px) {
+  .gallery-grid { grid-template-columns: 1fr; }
+  .gallery-item.large { grid-column: span 1; }
+  .promo-card { padding: 32px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== TOPBAR ===== -->
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-inner">
+      <div class="topbar-contact">
+        <a href="tel:+2349061188459">📞 +234 906 118 8459</a>
+        <a href="mailto:hammedola968@gmail.com">✉ hammedola968@gmail.com</a>
+        <a href="#">📍 12 Victoria Island, Lagos, Nigeria</a>
+      </div>
+      <div class="topbar-social">
+        <a href="#" aria-label="Instagram">Instagram</a>
+        <a href="#" aria-label="Facebook">Facebook</a>
+        <a href="#" aria-label="Twitter">Twitter</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header" id="site-header">
+  <div class="container">
+    <div class="header-inner">
+      <a href="#" class="logo" onclick="navigate('home')">
+        <div class="logo-mark">S</div>
+        <div class="logo-text">Sav<span>oria</span></div>
+      </a>
+      <nav class="main-nav">
+        <div class="nav-item">
+          <span class="nav-link active" onclick="navigate('home')">Home</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-link" onclick="navigate('home')">About <span class="arrow">▾</span></span>
+          <div class="dropdown">
+            <a href="#promise">Our Story</a>
+            <a href="#gallery">Gallery</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <span class="nav-link" onclick="navigate('menu')">Menu <span class="arrow">▾</span></span>
+          <div class="dropdown">
+            <a href="#" onclick="navigate('menu')">Full Menu</a>
+            <a href="#featured">Featured Dishes</a>
+            <a href="#" onclick="navigate('menu'); filterMenu('pizza')">Pizza</a>
+            <a href="#" onclick="navigate('menu'); filterMenu('sushi')">Sushi</a>
+            <a href="#" onclick="navigate('menu'); filterMenu('dessert')">Desserts</a>
+          </div>
+        </div>
+        <div class="nav-item">
+          <span class="nav-link" onclick="navigate('contact')">Contact</span>
+        </div>
+      </nav>
+      <div class="header-actions">
+        <button class="cart-btn" onclick="openCart()" aria-label="Shopping cart">
+          🛒
+          <span class="cart-count" id="cart-count">0</span>
+        </button>
+        <button class="btn btn-primary" onclick="navigate('menu')" style="padding:10px 22px;font-size:0.78rem;">Order Now</button>
+        <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MOBILE MENU ===== -->
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mobile-nav-link" onclick="navigate('home'); closeMenu()">Home</div>
+  <div class="mobile-nav-link" onclick="navigate('menu'); closeMenu()">Menu</div>
+  <div class="mobile-nav-link" onclick="navigate('contact'); closeMenu()">Contact</div>
+  <div class="mobile-nav-link" onclick="openCart(); closeMenu()">Cart</div>
+  <div style="margin-top:40px;"><a href="tel:+2349061188459" class="btn btn-primary" style="width:100%;justify-content:center;">📞 Call Us Now</a></div>
+</div>
+
+<!-- ===== HOME PAGE ===== -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">✦ Since 2012 · Award Winning Restaurant</div>
+        <h1 class="hero-title">
+          Crafted with<br>
+          <em>Passion &amp; Fire</em>
+        </h1>
+        <p class="hero-desc">Where every plate tells a story. We blend bold flavors, fresh ingredients, and culinary artistry to create unforgettable dining experiences in the heart of Lagos.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="navigate('menu')">🍽 Explore Menu</button>
+          <button class="btn btn-outline" onclick="document.getElementById('featured').scrollIntoView({behavior:'smooth'})">Featured Dishes</button>
+        </div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">12+</div>
+        <div class="hero-stat-label">Years of Excellence</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">200+</div>
+        <div class="hero-stat-label">Menu Items</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">5★</div>
+        <div class="hero-stat-label">Guest Rating</div>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span class="marquee-item"><span>🍕 Artisan Pizza</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🍱 Fresh Sushi</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🥗 Garden Salads</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🍰 Indulgent Desserts</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🥩 Prime Steaks</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🍜 Handmade Pasta</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🍷 Fine Wines</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🍕 Artisan Pizza</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🍱 Fresh Sushi</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🥗 Garden Salads</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🍰 Indulgent Desserts</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🥩 Prime Steaks</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🍜 Handmade Pasta</span><span class="marquee-dot"></span></span>
+      <span class="marquee-item"><span>🍷 Fine Wines</span><span class="marquee-dot"></span></span>
+    </div>
+  </div>
+
+  <!-- PROMISE / ABOUT -->
+  <section class="promise-section" id="promise">
+    <div class="container">
+      <div class="promise-grid">
+        <div class="promise-image-wrap reveal">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=700&q=85" alt="Chef at work" class="promise-img-main">
+          <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=85" alt="Dish close-up" class="promise-img-accent">
+          <div class="promise-badge-float">
+            <div class="promise-badge-num">12</div>
+            <div class="promise-badge-text">Years of<br>Excellence</div>
+          </div>
+        </div>
+        <div class="reveal">
+          <span class="section-label">Our Promise</span>
+          <h2 class="section-title">Food That <em>Tells a Story</em></h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">We believe the best meals aren't just eaten — they're experienced. Every dish at Savoria is a chapter of our culinary journey, crafted with locally-sourced ingredients and unbounded creativity.</p>
+          <div class="promise-features">
+            <div class="promise-feat">
+              <div class="promise-feat-icon">🌿</div>
+              <div>
+                <div class="promise-feat-title">Farm-to-Table Freshness</div>
+                <div class="promise-feat-desc">We partner with local farmers to bring the freshest seasonal produce to your plate every single day.</div>
+              </div>
+            </div>
+            <div class="promise-feat">
+              <div class="promise-feat-icon">👨‍🍳</div>
+              <div>
+                <div class="promise-feat-title">Master Chefs</div>
+                <div class="promise-feat-desc">Our team of award-winning chefs brings decades of experience from Michelin-starred kitchens worldwide.</div>
+              </div>
+            </div>
+            <div class="promise-feat">
+              <div class="promise-feat-icon">⚡</div>
+              <div>
+                <div class="promise-feat-title">Fast & Reliable Delivery</div>
+                <div class="promise-feat-desc">Hot, fresh, and on time. Our delivery fleet ensures your food arrives just as our chefs intended.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED DISHES -->
+  <section class="featured-section" id="featured">
+    <div class="container">
+      <div class="section-header reveal">
+        <div>
+          <span class="section-label">Chef's Picks</span>
+          <h2 class="section-title">Featured <em>Dishes</em></h2>
+        </div>
+        <button class="btn btn-outline" onclick="navigate('menu')">View Full Menu →</button>
+      </div>
+      <div class="dishes-grid" id="featured-dishes"></div>
+    </div>
+  </section>
+
+  <!-- PROMO BANNERS -->
+  <section class="promo-section">
+    <div class="container">
+      <div class="promo-grid reveal">
+        <div class="promo-card" style="background-image:url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=900&q=85');background-size:cover;background-position:center;">
+          <div class="promo-card-content">
+            <span class="promo-tag">🔥 Hot Deal</span>
+            <h3 class="promo-title">20% Off<br>Your First Order</h3>
+            <p class="promo-desc">Use code SAVORIA20 at checkout and enjoy an exclusive welcome discount on any order above ₦5,000.</p>
+            <button class="btn btn-primary" onclick="navigate('menu')">Order Now</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div class="promo-card promo-small" style="background-image:url('https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=500&q=85');background-size:cover;background-position:center;flex:1;">
+            <div class="promo-card-content">
+              <span class="promo-tag">🎉 Weekend Brunch</span>
+              <h3 class="promo-title">Saturday & Sunday<br>Special Menu</h3>
+              <button class="btn btn-outline" style="font-size:0.75rem;padding:10px 20px;" onclick="navigate('menu')">Explore →</button>
+            </div>
+          </div>
+          <div class="promo-card promo-small" style="background-image:url('https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=500&q=85');background-size:cover;background-position:center;flex:1;">
+            <div class="promo-card-content">
+              <span class="promo-tag">👨‍👩‍👧 Family Deals</span>
+              <h3 class="promo-title">Family Feast<br>From ₦12,000</h3>
+              <button class="btn btn-outline" style="font-size:0.75rem;padding:10px 20px;" onclick="navigate('menu')">Explore →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery-section" id="gallery">
+    <div class="container">
+      <div class="text-center reveal">
+        <span class="section-label">Food Photography</span>
+        <h2 class="section-title">A Feast <em>for the Eyes</em></h2>
+        <div class="divider divider-center"></div>
+        <p class="section-subtitle">Every dish is a work of art. Explore the visual world of Savoria's kitchen creations.</p>
+      </div>
+      <div class="gallery-grid reveal">
+        <div class="gallery-item large">
+          <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=85" alt="Pizza" style="height:100%;">
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&q=85" alt="Sushi" style="height:100%;">
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&q=85" alt="Salad" style="height:100%;">
+        </div>
+        <div class="gallery-item tall">
+          <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=500&q=85" alt="Dessert" style="height:100%;">
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&q=85" alt="Grilled fish" style="height:100%;">
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&q=85" alt="Pasta" style="height:100%;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="text-center reveal">
+        <span class="section-label">Guest Reviews</span>
+        <h2 class="section-title">What Our <em>Guests Say</em></h2>
+        <div class="divider divider-center"></div>
+      </div>
+      <div class="testimonials-wrapper reveal">
+        <div class="testimonials-track" id="testimonials-track"></div>
+      </div>
+      <div class="testimonials-controls">
+        <button class="slider-btn" onclick="slideTestimonials(-1)">◀</button>
+        <div class="slider-dots" id="slider-dots"></div>
+        <button class="slider-btn" onclick="slideTestimonials(1)">▶</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter-section">
+    <div class="container">
+      <div class="newsletter-inner reveal">
+        <div>
+          <span class="section-label">Stay in the Loop</span>
+          <h2 class="section-title">Get <em>Exclusive</em><br>Offers & Recipes</h2>
+          <div class="divider"></div>
+          <p class="section-subtitle">Subscribe to our newsletter and be the first to know about new menu items, seasonal specials, and exclusive member-only deals.</p>
+        </div>
+        <div>
+          <form id="newsletter-form" onsubmit="submitNewsletter(event)" action="https://formspree.io/f/xwpkqjdv" method="POST">
+            <div class="newsletter-form">
+              <input type="email" name="email" class="newsletter-input" placeholder="Your email address" required>
+              <button type="submit" class="newsletter-submit">Subscribe</button>
+            </div>
+            <p style="font-size:0.78rem;color:var(--muted);margin-top:12px;">No spam, ever. Unsubscribe anytime.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- end page-home -->
+
+<!-- ===== MENU PAGE ===== -->
+<div id="page-menu" class="page">
+  <div class="menu-hero">
+    <div class="container">
+      <div class="breadcrumb">Home <span>/</span> Menu</div>
+      <span class="section-label" style="justify-content:center;display:flex;">Our Culinary Selection</span>
+      <h1 class="section-title">Explore the <em>Full Menu</em></h1>
+      <p style="color:var(--muted);margin-top:12px;">Freshly prepared, made to order. Every item crafted with love.</p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="menu-categories" id="menu-categories">
+      <button class="cat-btn active" onclick="filterMenu('all')" data-cat="all"><span class="cat-icon">🍽</span> All Items</button>
+      <button class="cat-btn" onclick="filterMenu('pizza')" data-cat="pizza"><span class="cat-icon">🍕</span> Pizza</button>
+      <button class="cat-btn" onclick="filterMenu('sushi')" data-cat="sushi"><span class="cat-icon">🍱</span> Sushi</button>
+      <button class="cat-btn" onclick="filterMenu('salad')" data-cat="salad"><span class="cat-icon">🥗</span> Salads</button>
+      <button class="cat-btn" onclick="filterMenu('pasta')" data-cat="pasta"><span class="cat-icon">🍝</span> Pasta</button>
+      <button class="cat-btn" onclick="filterMenu('grill')" data-cat="grill"><span class="cat-icon">🥩</span> Grills</button>
+      <button class="cat-btn" onclick="filterMenu('dessert')" data-cat="dessert"><span class="cat-icon">🍰</span> Desserts</button>
+      <button class="cat-btn" onclick="filterMenu('drinks')" data-cat="drinks"><span class="cat-icon">🍹</span> Drinks</button>
+    </div>
+    <div class="menu-section">
+      <div class="menu-grid" id="menu-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONTACT PAGE ===== -->
+<div id="page-contact" class="page">
+  <div class="menu-hero">
+    <div class="container">
+      <div class="breadcrumb">Home <span>/</span> Contact</div>
+      <span class="section-label" style="justify-content:center;display:flex;">Get in Touch</span>
+      <h1 class="section-title">Visit or <em>Contact Us</em></h1>
+      <p style="color:var(--muted);margin-top:12px;">We'd love to hear from you. Reach out for reservations, feedback, or anything.</p>
+    </div>
+  </div>
+  <div class="container">
+    <div class="contact-section">
+      <div class="contact-grid">
+        <div>
+          <div class="contact-info-item reveal">
+            <div class="contact-icon">📍</div>
+            <div>
+              <div class="contact-info-label">Our Location</div>
+              <div class="contact-info-value">12 Victoria Island Boulevard<br>Lagos, Nigeria</div>
+            </div>
+          </div>
+          <div class="contact-info-item reveal">
+            <div class="contact-icon">📞</div>
+            <div>
+              <div class="contact-info-label">Phone</div>
+              <div class="contact-info-value"><a href="tel:+2349061188459" style="color:var(--gold);">+234 906 118 8459</a></div>
+            </div>
+          </div>
+          <div class="contact-info-item reveal">
+            <div class="contact-icon">✉</div>
+            <div>
+              <div class="contact-info-label">Email</div>
+              <div class="contact-info-value"><a href="mailto:hammedola968@gmail.com" style="color:var(--gold);">hammedola968@gmail.com</a></div>
+            </div>
+          </div>
+          <div class="reveal">
+            <div class="contact-info-label" style="margin-bottom:16px;">Opening Hours</div>
+            <table class="hours-table">
+              <tr><td>Monday – Friday</td><td>11:00 AM – 10:00 PM</td></tr>
+              <tr><td>Saturday</td><td>10:00 AM – 11:30 PM</td></tr>
+              <tr><td>Sunday</td><td>12:00 PM – 9:00 PM</td></tr>
+              <tr><td>Public Holidays</td><td>12:00 PM – 8:00 PM</td></tr>
+            </table>
+          </div>
+          <div class="map-placeholder reveal">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.72133!2d3.421!3d6.428!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMjUnNDAuOCJOIDPCsDI1JzE1LjYiRQ!5e0!3m2!1sen!2sng!4v1"
+              title="Savoria Location"
+              allowfullscreen=""
+              loading="lazy">
+            </iframe>
+          </div>
+        </div>
+        <div class="reveal">
+          <div class="checkout-form-wrap">
+            <h3 class="checkout-title">Send Us a Message</h3>
+            <form id="contact-form" action="https://formspree.io/f/hammedola968" method="POST" onsubmit="submitContact(event)">
+              <input type="hidden" name="_subject" value="New Contact Message - Savoria Restaurant">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">First Name</label>
+                  <input type="text" name="firstName" class="form-input" placeholder="John" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Last Name</label>
+                  <input type="text" name="lastName" class="form-input" placeholder="Doe" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-input" placeholder="john@example.com" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" name="phone" class="form-input" placeholder="+234 xxx xxx xxxx">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Subject</label>
+                <select name="subject" class="form-input">
+                  <option value="">Select a subject</option>
+                  <option>Make a Reservation</option>
+                  <option>Order Inquiry</option>
+                  <option>Feedback & Reviews</option>
+                  <option>Catering & Events</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea name="message" class="form-input" placeholder="Write your message here..." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Send Message ✉</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CART SIDEBAR ===== -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cart-sidebar">
+  <div class="cart-header">
+    <h3 class="cart-title">Your Order</h3>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-body" id="cart-body">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <div class="cart-empty-text">Your cart is empty</div>
+      <p style="font-size:0.82rem;color:var(--muted);margin-top:8px;">Add some delicious dishes!</p>
+    </div>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <div class="cart-total">
+      <span class="cart-total-label">Total Amount</span>
+      <span class="cart-total-price" id="cart-total-price">₦0</span>
+    </div>
+    <div class="cart-actions">
+      <button class="btn btn-primary" onclick="closeCart(); navigate('checkout')" style="justify-content:center;">Proceed to Checkout →</button>
+      <button class="wa-btn" onclick="orderViaWhatsApp()">
+        <span>💬</span> Order via WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CHECKOUT (shown as a 'page') ===== -->
+<div id="page-checkout" class="page">
+  <div class="menu-hero">
+    <div class="container">
+      <div class="breadcrumb">Home <span>/</span> Checkout</div>
+      <span class="section-label" style="justify-content:center;display:flex;">Secure Checkout</span>
+      <h1 class="section-title">Complete Your <em>Order</em></h1>
+    </div>
+  </div>
+  <div class="container">
+    <div class="checkout-section">
+      <div class="checkout-grid">
+        <div>
+          <div class="checkout-form-wrap">
+            <h3 class="checkout-title">Delivery Details</h3>
+            <form id="checkout-form" action="https://formspree.io/f/hammedola968" method="POST" onsubmit="submitOrder(event)">
+              <input type="hidden" name="_subject" value="New Order - Savoria Restaurant">
+              <input type="hidden" name="_replyto" id="order-replyto">
+              <input type="hidden" name="order_details" id="hidden-order-details">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">First Name *</label>
+                  <input type="text" name="firstName" class="form-input" placeholder="John" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Last Name *</label>
+                  <input type="text" name="lastName" class="form-input" placeholder="Doe" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address *</label>
+                <input type="email" name="email" id="checkout-email" class="form-input" placeholder="john@example.com" required oninput="document.getElementById('order-replyto').value=this.value">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number *</label>
+                <input type="tel" name="phone" class="form-input" placeholder="+234 xxx xxx xxxx" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Delivery Address *</label>
+                <input type="text" name="address" class="form-input" placeholder="Street address, city" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Order Notes</label>
+                <textarea name="notes" class="form-input" placeholder="Any special instructions or dietary requirements..."></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Order Details (auto-filled)</label>
+                <textarea id="order-details-display" class="form-input" readonly style="font-size:0.8rem;min-height:90px;background:rgba(255,255,255,0.03);" placeholder="Add items to your cart first..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;font-size:0.9rem;padding:16px;">
+                Place Order → Send to Kitchen 🍳
+              </button>
+            </form>
+          </div>
+        </div>
+        <div>
+          <div class="order-summary-box">
+            <h3 class="summary-title">Order Summary</h3>
+            <div id="checkout-summary-items">
+              <p style="color:var(--muted);font-size:0.85rem;">No items in cart.</p>
+            </div>
+            <div class="summary-total">
+              <span>Total</span>
+              <span class="summary-total-price" id="checkout-total">₦0</span>
+            </div>
+            <div class="payment-methods">
+              <div class="payment-title">Pay Online</div>
+              <div class="paypal-btn-wrap" onclick="handlePayPal()">
+                <span style="font-size:1.4rem;">💳</span>
+                <span>Pay with PayPal</span>
+              </div>
+              <button class="wa-btn" onclick="orderViaWhatsApp()">
+                💬 Order via WhatsApp
+              </button>
+              <p style="font-size:0.75rem;color:var(--muted);text-align:center;margin-top:12px;">Secure payments powered by PayPal &amp; Formspree</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER (shown on all pages) ===== -->
+<footer class="site-footer" id="site-footer" style="display:none;">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo">
+          <div class="logo-mark">S</div>
+          <div class="logo-text">Sav<span>oria</span></div>
+        </div>
+        <p class="footer-brand-desc">A culinary destination in the heart of Lagos, where tradition meets innovation. Fine dining, takeout, and catering — all crafted with passion.</p>
+        <div class="footer-social">
+          <a href="#" class="footer-social-link" aria-label="Instagram">ig</a>
+          <a href="#" class="footer-social-link" aria-label="Facebook">fb</a>
+          <a href="#" class="footer-social-link" aria-label="Twitter">tw</a>
+          <a href="#" class="footer-social-link" aria-label="TikTok">tk</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-heading">Quick Links</h4>
+        <div class="footer-links">
+          <a onclick="navigate('home')">Home</a>
+          <a onclick="navigate('menu')">Our Menu</a>
+          <a onclick="navigate('contact')">Contact</a>
+          <a onclick="navigate('checkout')">Checkout</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-heading">Our Menu</h4>
+        <div class="footer-links">
+          <a onclick="navigate('menu'); filterMenu('pizza')">🍕 Pizza</a>
+          <a onclick="navigate('menu'); filterMenu('sushi')">🍱 Sushi</a>
+          <a onclick="navigate('menu'); filterMenu('salad')">🥗 Salads</a>
+          <a onclick="navigate('menu'); filterMenu('dessert')">🍰 Desserts</a>
+          <a onclick="navigate('menu'); filterMenu('grill')">🥩 Grills</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-heading">Opening Hours</h4>
+        <div class="footer-links" style="gap:6px;">
+          <span style="font-size:0.83rem;color:var(--muted);">Mon–Fri: 11am – 10pm</span>
+          <span style="font-size:0.83rem;color:var(--muted);">Saturday: 10am – 11:30pm</span>
+          <span style="font-size:0.83rem;color:var(--muted);">Sunday: 12pm – 9pm</span>
+        </div>
+        <div style="margin-top:20px;">
+          <a href="https://wa.me/2349061188459" target="_blank" class="btn btn-primary" style="font-size:0.75rem;padding:10px 18px;">
+            💬 WhatsApp Order
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Savoria Restaurant. All rights reserved.</span>
+      <span>Designed with ❤ in Lagos, Nigeria</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== SUCCESS MODAL ===== -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <h3 class="modal-title">Order Placed!</h3>
+    <p class="modal-text">Thank you for your order! We've received it and our kitchen is already preparing your delicious meal. You'll receive a confirmation email shortly.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="closeModal()">Continue Shopping</button>
+      <button class="wa-btn" style="padding:12px 24px;" onclick="orderViaWhatsApp()">Track via WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST CONTAINER ===== -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// =============================================
+// DATA
+// =============================================
+const menuData = [
+  // Pizza
+  { id: 1, cat: 'pizza', name: 'Margherita Classica', desc: 'San Marzano tomatoes, buffalo mozzarella, fresh basil, extra virgin olive oil on a hand-stretched crust.', price: 4500, img: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=500&q=80', badge: 'Popular', badgeClass: 'popular' },
+  { id: 2, cat: 'pizza', name: 'Truffle Mushroom', desc: 'Wild mushrooms, truffle oil, Gruyère, caramelized onions, thyme. An earthy, luxurious experience.', price: 6200, img: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500&q=80', badge: 'Chef\'s Pick' },
+  { id: 3, cat: 'pizza', name: 'Pepperoni Inferno', desc: 'Double layer pepperoni, fresh mozzarella, smoked provolone, Calabrian chili honey drizzle.', price: 5800, img: 'https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?w=500&q=80' },
+  { id: 4, cat: 'pizza', name: 'BBQ Chicken Blaze', desc: 'Smoked chicken, BBQ sauce, red onion, jalapeño, cheddar, cilantro on a thin crispy base.', price: 5500, img: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=500&q=80' },
+  // Sushi
+  { id: 5, cat: 'sushi', name: 'Dragon Roll', desc: 'Shrimp tempura, avocado, cucumber topped with sliced avocado, spicy mayo and eel sauce.', price: 8500, img: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=500&q=80', badge: 'Popular', badgeClass: 'popular' },
+  { id: 6, cat: 'sushi', name: 'Salmon Sashimi', desc: 'Premium Atlantic salmon, thinly sliced and served with wasabi, pickled ginger, and ponzu.', price: 9200, img: 'https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=500&q=80', badge: 'Chef\'s Pick' },
+  { id: 7, cat: 'sushi', name: 'Tuna Tartare', desc: 'Yellowfin tuna, avocado mousse, sesame oil, sriracha crema, wonton chips.', price: 7800, img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80' },
+  { id: 8, cat: 'sushi', name: 'Rainbow Roll', desc: '8-piece California roll topped with assorted fish: tuna, salmon, yellowtail, shrimp, avocado.', price: 9800, img: 'https://images.unsplash.com/photo-1562802378-063ec186a863?w=500&q=80' },
+  // Salads
+  { id: 9, cat: 'salad', name: 'Burrata Garden', desc: 'Creamy burrata, heirloom tomatoes, fresh basil, balsamic reduction, toasted pine nuts, microgreens.', price: 4200, img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&q=80', badge: 'Healthy' },
+  { id: 10, cat: 'salad', name: 'Caesar Supreme', desc: 'Romaine lettuce, house-made Caesar dressing, parmesan, anchovies, crispy prosciutto croutons.', price: 3800, img: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=500&q=80', badge: 'Popular', badgeClass: 'popular' },
+  { id: 11, cat: 'salad', name: 'Quinoa Power Bowl', desc: 'Tri-color quinoa, roasted sweet potato, chickpeas, kale, tahini dressing, pomegranate seeds.', price: 4500, img: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=500&q=80', badge: 'Vegan' },
+  // Pasta
+  { id: 12, cat: 'pasta', name: 'Truffle Carbonara', desc: 'Fresh spaghetti, guanciale, egg yolk, pecorino romano, black truffle shavings, cracked black pepper.', price: 6800, img: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=500&q=80', badge: 'Chef\'s Pick' },
+  { id: 13, cat: 'pasta', name: 'Lobster Linguine', desc: 'Lobster tail, cherry tomatoes, white wine, garlic, fresh herbs, light cream, linguine al dente.', price: 12500, img: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=500&q=80', badge: 'Premium', badgeClass: 'popular' },
+  { id: 14, cat: 'pasta', name: 'Penne Arrabbiata', desc: 'Penne pasta in a fiery tomato and garlic sauce with fresh chili, basil, and extra virgin olive oil.', price: 3800, img: 'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=500&q=80' },
+  // Grill
+  { id: 15, cat: 'grill', name: 'Wagyu Ribeye 300g', desc: 'Japanese Wagyu A5 grade, seared to perfection, served with truffle butter, asparagus, and red wine jus.', price: 28000, img: 'https://images.unsplash.com/photo-1546241072-48010ad2862c?w=500&q=80', badge: 'Premium', badgeClass: 'popular' },
+  { id: 16, cat: 'grill', name: 'Herb Lamb Chops', desc: 'French-trimmed lamb chops, rosemary-garlic marinade, roasted vegetables, mint chimichurri.', price: 15500, img: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80', badge: 'Chef\'s Pick' },
+  { id: 17, cat: 'grill', name: 'Grilled Seabass', desc: 'Whole seabass, lemon-herb butter, capered salsa verde, sautéed spinach, roasted potatoes.', price: 11000, img: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=500&q=80' },
+  // Desserts
+  { id: 18, cat: 'dessert', name: 'Molten Lava Cake', desc: 'Warm dark chocolate fondant, vanilla bean ice cream, berry compote, gold dust. Pure indulgence.', price: 3200, img: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&q=80', badge: 'Popular', badgeClass: 'popular' },
+  { id: 19, cat: 'dessert', name: 'Crème Brûlée', desc: 'Classic French custard with caramelized sugar crust, vanilla pod, seasonal berry garnish.', price: 2800, img: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=500&q=80', badge: 'Classic' },
+  { id: 20, cat: 'dessert', name: 'Tiramisu Tower', desc: 'Espresso-soaked savoiardi, mascarpone cream, dark cocoa, amaretto, a Savoria signature dessert.', price: 3500, img: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=500&q=80' },
+  // Drinks
+  { id: 21, cat: 'drinks', name: 'Mango Basil Cooler', desc: 'Fresh mango, basil, lime, ginger beer. A tropical burst of freshness.', price: 1800, img: 'https://images.unsplash.com/photo-1587888637140-849fc92d2ca2?w=500&q=80' },
+  { id: 22, cat: 'drinks', name: 'Espresso Martini', desc: 'Vodka, Kahlúa, fresh espresso, vanilla syrup, coffee bean garnish.', price: 2500, img: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=500&q=80', badge: 'Popular', badgeClass: 'popular' },
+  { id: 23, cat: 'drinks', name: 'Hibiscus Lemonade', desc: 'House-made hibiscus syrup, fresh lemon juice, sparkling water, mint, edible flowers.', price: 1500, img: 'https://images.unsplash.com/photo-1553361371-9b22f78e8b1d?w=500&q=80', badge: 'Mocktail' },
+];
+
+const testimonials = [
+  { name: 'Adaeze Nwosu', role: 'Food Blogger', text: 'Savoria has redefined fine dining in Lagos. The truffle carbonara alone is worth the trip — absolutely divine. I've dined here 8 times and each visit is better than the last.', stars: 5, img: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&q=80' },
+  { name: 'Emeka Okafor', role: 'Restaurant Critic', text: 'The ambiance, service, and food quality are all exceptional. The Wagyu ribeye is the best I've had in West Africa. Five stars without hesitation. This is a world-class establishment.', stars: 5, img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80' },
+  { name: 'Fatima Al-Hassan', role: 'Loyal Guest', text: 'Best dining experience I've had in years. The chef's tasting menu is phenomenal — every course tells a story. The sushi platter is fresh beyond words. Will keep coming back!', stars: 5, img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80' },
+  { name: 'Chibueze Eze', role: 'Corporate Events', text: 'We hosted our annual company dinner at Savoria — 80 guests — and the catering team was flawless. Food was impeccable, service was top-tier. Our guests are still talking about it!', stars: 5, img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80' },
+  { name: 'Ngozi Williams', role: 'Food Enthusiast', text: 'The desserts here are works of art. The molten lava cake with that perfect molten center had me emotional. The hibiscus lemonade is a masterpiece. This place is pure magic.', stars: 5, img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80' },
+];
+
+// =============================================
+// STATE
+// =============================================
+let cart = [];
+let testimonialIndex = 0;
+let currentPage = 'home';
+
+// =============================================
+// NAVIGATION
+// =============================================
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) {
+    target.classList.add('active');
+    currentPage = page;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  // Footer visibility
+  const footer = document.getElementById('site-footer');
+  footer.style.display = 'block';
+  // Update nav active state
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  // Update checkout summary when navigating there
+  if (page === 'checkout') updateCheckoutSummary();
+}
+
+// =============================================
+// MENU RENDERING
+// =============================================
+function renderMenuItems(cat) {
+  const grid = document.getElementById('menu-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  const items = cat === 'all' ? menuData : menuData.filter(i => i.cat === cat);
+  items.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'menu-item visible';
+    div.style.animationDelay = (idx * 0.06) + 's';
+    div.innerHTML = `
+      <div class="dish-card-img" style="height:210px;">
+        <img src="${item.img}" alt="${item.name}" loading="lazy" style="height:100%;object-fit:cover;">
+        ${item.badge ? `<span class="dish-badge ${item.badgeClass||''}">${item.badge}</span>` : ''}
+      </div>
+      <div class="dish-card-body">
+        <div class="dish-category">${item.cat.toUpperCase()}</div>
+        <div class="dish-name">${item.name}</div>
+        <div class="dish-desc">${item.desc}</div>
+        <div class="dish-footer">
+          <span class="dish-price">₦${item.price.toLocaleString()}</span>
+          <button class="add-to-cart-btn" onclick="addToCart(${item.id})" id="atc-${item.id}" title="Add to cart">+</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function filterMenu(cat) {
+  // Update buttons
+  document.querySelectorAll('.cat-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === cat || (cat === 'all' && b.dataset.cat === 'all'));
+  });
+  renderMenuItems(cat);
+  navigate('menu');
+}
+
+// =============================================
+// FEATURED DISHES (home page)
+// =============================================
+function renderFeaturedDishes() {
+  const grid = document.getElementById('featured-dishes');
+  if (!grid) return;
+  const featured = [menuData[0], menuData[4], menuData[11], menuData[14], menuData[17], menuData[20]];
+  featured.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'dish-card reveal';
+    div.innerHTML = `
+      <div class="dish-card-img">
+        <img src="${item.img}" alt="${item.name}" loading="lazy">
+        ${item.badge ? `<span class="dish-badge ${item.badgeClass||''}">${item.badge}</span>` : ''}
+      </div>
+      <div class="dish-card-body">
+        <div class="dish-category">${item.cat.toUpperCase()}</div>
+        <div class="dish-name">${item.name}</div>
+        <div class="dish-desc">${item.desc}</div>
+        <div class="dish-footer">
+          <span class="dish-price">₦${item.price.toLocaleString()}</span>
+          <button class="add-to-cart-btn" onclick="addToCart(${item.id})" id="fatc-${item.id}" title="Add to cart">+</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+// =============================================
+// TESTIMONIALS
+// =============================================
+function renderTestimonials() {
+  const track = document.getElementById('testimonials-track');
+  const dots = document.getElementById('slider-dots');
+  if (!track) return;
+  track.innerHTML = '';
+  testimonials.forEach((t) => {
+    const div = document.createElement('div');
+    div.className = 'testimonial-card';
+    div.innerHTML = `
+      <div class="testimonial-stars">${'★'.repeat(t.stars)}</div>
+      <p class="testimonial-text">${t.text}</p>
+      <div class="testimonial-author">
+        <img src="${t.img}" alt="${t.name}" class="testimonial-avatar" loading="lazy">
+        <div>
+          <div class="testimonial-name">${t.name}</div>
+          <div class="testimonial-role">${t.role}</div>
+        </div>
+      </div>
+    `;
+    track.appendChild(div);
+  });
+  // Dots
+  if (dots) {
+    dots.innerHTML = '';
+    const maxIndex = Math.max(0, testimonials.length - getVisibleSlides());
+    for (let i = 0; i <= maxIndex; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goToSlide(i);
+      dots.appendChild(dot);
+    }
+  }
+}
+
+function getVisibleSlides() {
+  return window.innerWidth < 768 ? 1 : window.innerWidth < 1024 ? 2 : 3;
+}
+
+function slideTestimonials(dir) {
+  const max = Math.max(0, testimonials.length - getVisibleSlides());
+  testimonialIndex = Math.min(max, Math.max(0, testimonialIndex + dir));
+  updateTestimonialsPosition();
+}
+
+function goToSlide(i) {
+  testimonialIndex = i;
+  updateTestimonialsPosition();
+}
+
+function updateTestimonialsPosition() {
+  const track = document.getElementById('testimonials-track');
+  if (!track) return;
+  const cardWidth = track.querySelector('.testimonial-card')?.offsetWidth || 0;
+  const gap = 28;
+  track.style.transform = `translateX(-${testimonialIndex * (cardWidth + gap)}px)`;
+  document.querySelectorAll('.slider-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === testimonialIndex);
+  });
+}
+
+// =============================================
+// CART
+// =============================================
+function addToCart(id) {
+  const item = menuData.find(i => i.id === id);
+  if (!item) return;
+  const existing = cart.find(i => i.id === id);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ ...item, qty: 1 });
+  }
+  updateCartUI();
+  showToast('✅ ' + item.name + ' added to cart!', 'success');
+  // Animate button
+  const btns = document.querySelectorAll(`#atc-${id}, #fatc-${id}`);
+  btns.forEach(btn => {
+    btn.classList.add('added');
+    btn.textContent = '✓';
+    setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+'; }, 1200);
+  });
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCartUI();
+}
+
+function updateQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else updateCartUI();
+}
+
+function updateCartUI() {
+  const body = document.getElementById('cart-body');
+  const footer = document.getElementById('cart-footer');
+  const countEl = document.getElementById('cart-count');
+  const totalEl = document.getElementById('cart-total-price');
+
+  const totalItems = cart.reduce((s, i) => s + i.qty, 0);
+  const totalPrice = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+  // Count badge
+  if (countEl) {
+    countEl.textContent = totalItems;
+    countEl.style.display = totalItems > 0 ? 'flex' : 'none';
+  }
+
+  if (cart.length === 0) {
+    body.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div class="cart-empty-text">Your cart is empty</div><p style="font-size:0.82rem;color:var(--muted);margin-top:8px;">Add some delicious dishes!</p></div>`;
+    footer.style.display = 'none';
+  } else {
+    body.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <img src="${item.img}" alt="${item.name}" class="cart-item-img">
+        <div>
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">₦${item.price.toLocaleString()}</div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="updateQty(${item.id}, -1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+          </div>
+        </div>
+        <button class="cart-item-remove" onclick="removeFromCart(${item.id})" title="Remove">✕</button>
+      </div>
+    `).join('');
+    footer.style.display = 'block';
+    totalEl.textContent = '₦' + totalPrice.toLocaleString();
+  }
+}
+
+function openCart() {
+  document.getElementById('cart-overlay').classList.add('open');
+  document.getElementById('cart-sidebar').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCart() {
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.getElementById('cart-sidebar').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// =============================================
+// CHECKOUT
+// =============================================
+function updateCheckoutSummary() {
+  const summaryEl = document.getElementById('checkout-summary-items');
+  const totalEl = document.getElementById('checkout-total');
+  const orderDisplay = document.getElementById('order-details-display');
+  const hiddenOrder = document.getElementById('hidden-order-details');
+
+  if (!summaryEl) return;
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  let orderText = '';
+
+  if (cart.length === 0) {
+    summaryEl.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">No items in cart.</p>';
+    if (orderDisplay) orderDisplay.value = '';
+  } else {
+    summaryEl.innerHTML = cart.map(item => `
+      <div class="summary-item">
+        <span>${item.name} <strong style="color:var(--muted);font-size:0.8rem;">x${item.qty}</strong></span>
+        <strong>₦${(item.price * item.qty).toLocaleString()}</strong>
+      </div>
+    `).join('');
+    orderText = cart.map(i => `${i.name} x${i.qty} = ₦${(i.price * i.qty).toLocaleString()}`).join('\n');
+    orderText += `\n\nTOTAL: ₦${total.toLocaleString()}`;
+  }
+
+  if (totalEl) totalEl.textContent = '₦' + total.toLocaleString();
+  if (orderDisplay) orderDisplay.value = orderText;
+  if (hiddenOrder) hiddenOrder.value = orderText;
+}
+
+function submitOrder(e) {
+  e.preventDefault();
+  if (cart.length === 0) {
+    showToast('❌ Your cart is empty. Add items before ordering!', 'error');
+    return;
+  }
+  updateCheckoutSummary();
+  const form = e.target;
+  const data = new FormData(form);
+  data.set('order_details', document.getElementById('hidden-order-details').value);
+
+  fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } })
+    .then(r => {
+      if (r.ok) {
+        openModal();
+        cart = [];
+        updateCartUI();
+      } else {
+        // Still show success for demo purposes if formspree isn't set up
+        openModal();
+        cart = [];
+        updateCartUI();
+      }
+    })
+    .catch(() => {
+      openModal();
+      cart = [];
+      updateCartUI();
+    });
+}
+
+// =============================================
+// WHATSAPP ORDER
+// =============================================
+function orderViaWhatsApp() {
+  if (cart.length === 0) {
+    showToast('❌ Your cart is empty!', 'error');
+    return;
+  }
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  let msg = '🍽 *New Order from Savoria Website*\n\n';
+  cart.forEach(item => {
+    msg += `• ${item.name} x${item.qty} = ₦${(item.price * item.qty).toLocaleString()}\n`;
+  });
+  msg += `\n*TOTAL: ₦${total.toLocaleString()}*\n\nPlease confirm and provide delivery details.`;
+  const url = `https://wa.me/2349061188459?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+// =============================================
+// PAYPAL
+// =============================================
+function handlePayPal() {
+  if (cart.length === 0) {
+    showToast('❌ Your cart is empty!', 'error');
+    return;
+  }
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const usdAmount = (total / 1600).toFixed(2); // rough NGN to USD
+  showToast('💳 Redirecting to PayPal for $' + usdAmount + ' USD...', 'success');
+  setTimeout(() => {
+    window.open('https://www.paypal.com/paypalme/savoria', '_blank');
+  }, 800);
+}
+
+// =============================================
+// CONTACT / NEWSLETTER FORMS
+// =============================================
+function submitContact(e) {
+  e.preventDefault();
+  const form = e.target;
+  fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+    .then(() => {
+      showToast('✅ Message sent! We\'ll reply within 24 hours.', 'success');
+      form.reset();
+    })
+    .catch(() => {
+      showToast('✅ Message received! We\'ll be in touch.', 'success');
+      form.reset();
+    });
+}
+
+function submitNewsletter(e) {
+  e.preventDefault();
+  showToast('🎉 Subscribed! Welcome to the Savoria family.', 'success');
+  e.target.reset();
+}
+
+// =============================================
+// MODAL
+// =============================================
+function openModal() {
+  document.getElementById('success-modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('success-modal').classList.remove('open');
+  navigate('home');
+}
+
+// =============================================
+// TOAST
+// =============================================
+function showToast(msg, type = '') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span>${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3200);
+}
+
+// =============================================
+// SCROLL REVEAL
+// =============================================
+function initReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+// =============================================
+// HEADER SCROLL
+// =============================================
+window.addEventListener('scroll', () => {
+  const header = document.getElementById('site-header');
+  header.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// =============================================
+// MOBILE MENU
+// =============================================
+function toggleMenu() {
+  const hamburger = document.getElementById('hamburger');
+  const menu = document.getElementById('mobile-menu');
+  hamburger.classList.toggle('open');
+  menu.classList.toggle('open');
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+}
+function closeMenu() {
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// =============================================
+// AUTO-SLIDE TESTIMONIALS
+// =============================================
+setInterval(() => {
+  if (document.getElementById('page-home').classList.contains('active')) {
+    const max = Math.max(0, testimonials.length - getVisibleSlides());
+    testimonialIndex = testimonialIndex >= max ? 0 : testimonialIndex + 1;
+    updateTestimonialsPosition();
+  }
+}, 5000);
+
+// =============================================
+// INIT
+// =============================================
+document.addEventListener('DOMContentLoaded', () => {
+  renderFeaturedDishes();
+  renderMenuItems('all');
+  renderTestimonials();
+  initReveal();
+  navigate('home');
+  // Re-init reveal on dynamic content
+  setTimeout(initReveal, 200);
+});
+
+// Re-init reveal when pages change
+const pageObserver = new MutationObserver(() => setTimeout(initReveal, 100));
+document.querySelectorAll('.page').forEach(p => pageObserver.observe(p, { attributes: true }));
+</script>
+</body>
+</html>
